@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "osp.leobert.android.pandoradoc"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -16,6 +16,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        encoding 'utf-8'
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -25,4 +31,19 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+
+    implementation "ru.noties.markwon:core:3.0.0"
+    implementation "ru.noties.markwon:recycler:3.0.0"
+
+    implementation "ru.noties.markwon:ext-strikethrough:3.0.0"
+    implementation "ru.noties.markwon:ext-tables:3.0.0"
+    implementation "ru.noties.markwon:ext-tasklist:3.0.0"
+    implementation "ru.noties.markwon:html:3.0.0"
+    implementation "ru.noties.markwon:image-gif:3.0.0"
+    implementation "ru.noties.markwon:image-svg:3.0.0"
+    implementation "ru.noties.markwon:syntax-highlight:3.0.0"
+    // https://mvnrepository.com/artifact/ru.noties.markwon/recycler-table
+    implementation group: 'ru.noties.markwon', name: 'recycler-table', version: '3.0.0'
+
 }
