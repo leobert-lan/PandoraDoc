@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
@@ -44,10 +45,10 @@ import ru.noties.markwon.urlprocessor.UrlProcessorRelativeToAbsolute;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final MarkwonReducer reducer = MarkwonReducer.directChildren();
+    protected final MarkwonReducer reducer = MarkwonReducer.directChildren();
 
     //没有仔细阅读Markwon内部代码，应该有更加合适的方式得到其index，目前方法很粗糙，暂且使用着
-    private final HashMap<String, Integer> fragmentIndexes = new HashMap<>();
+    protected final HashMap<String, Integer> fragmentIndexes = new HashMap<>();
     private LinearSmoothScroller alignTopScroller;
 
     RecyclerView recyclerView;
@@ -75,6 +76,22 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
+        FloatingActionButton floatingActionButton = findViewById(R.id.fab);
+        floatingActionButton.setOnClickListener(v -> {
+            alignTopScroller.setTargetPosition(0);
+
+            RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+            if (layoutManager != null)
+                layoutManager.startSmoothScroll(alignTopScroller);
+        });
+
+        loadMarkdown(adapter);
+
+        // please note that we should notify updates (adapter doesn't do it implicitly)
+        adapter.notifyDataSetChanged();
+    }
+
+    protected void loadMarkdown(MarkwonAdapter adapter) {
         final Markwon markwon = markwon(this, this::navigate2Fragment);
 
         String content = loadReadMe(this);
@@ -89,13 +106,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         adapter.setParsedMarkdown(markwon, nodes);
-
-        // please note that we should notify updates (adapter doesn't do it implicitly)
-        adapter.notifyDataSetChanged();
     }
 
     @NonNull
-    private static Markwon markwon(@NonNull Context context, final PagerFragmentNavigationHandler.OnPagerFragmentNavigation onPagerFragmentNavigation) {
+    protected Markwon markwon(@NonNull Context context, final PagerFragmentNavigationHandler.OnPagerFragmentNavigation onPagerFragmentNavigation) {
         return Markwon.builder(context)
                 .usePlugin(CorePlugin.create())
                 .usePlugin(ImagesPlugin.createWithAssets(context))
@@ -108,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
                     public void configureHtmlRenderer(@NonNull MarkwonHtmlRenderer.Builder builder) {
                         super.configureHtmlRenderer(builder);
                         builder.setHandler(
-                                Arrays.asList("a","fg"), new PagerFragmentNavigationHandler(onPagerFragmentNavigation));
+                                Arrays.asList("a", "fg"), new PagerFragmentNavigationHandler(onPagerFragmentNavigation));
                     }
                 })
 //                .usePlugin(SyntaxHighlightPlugin.create())
@@ -135,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
     }
 
-    private void navigate2Fragment(@NonNull String fragment) {
+    void navigate2Fragment(@NonNull String fragment) {
         if (fragmentIndexes.containsKey(fragment)) {
             Integer i = fragmentIndexes.get(fragment);
             if (i != null) {
@@ -151,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @NonNull
-    private static String loadReadMe(@NonNull Context context) {
+    protected String loadReadMe(@NonNull Context context) {
         InputStream stream = null;
         try {
             stream = context.getAssets().open("AppViewHoldersReport.md");
@@ -162,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @NonNull
-    private static String readStream(@Nullable InputStream inputStream) {
+    protected String readStream(@Nullable InputStream inputStream) {
 
         String out = null;
 
