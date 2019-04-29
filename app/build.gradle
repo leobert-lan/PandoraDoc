@@ -55,5 +55,7 @@ dependencies {
     annotationProcessor 'individual.leobert.libs:retrofitext-compiler:1.0.1'
     annotationProcessor 'com.squareup.retrofit2:retrofit:2.3.0'
 
+    compile 'com.alibaba:fastjson:1.1.70.android'
+
 
 }

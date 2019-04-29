@@ -19,4 +19,8 @@ public interface JddMockApi {
     @GET("/pandoradoc/latest")
     @Streaming
     Call<ResponseBody> download();
+
+    @GET("/pandoradoc/latest/md5")
+    @Streaming
+    Call<Resp<String>> latestMd5();
 }
