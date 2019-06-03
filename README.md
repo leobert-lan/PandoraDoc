@@ -7,4 +7,53 @@ doc generater and reader for Pandora
 
 * app module 用于手机上查看doc，
 * vh_reporter module 基于JSR305和SPI生成文档，但是目前gradle高于5.0时存在问题
-*
+* sample module 展示了如何使用
+
+注解处理的环境变量
+
+```
+javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [module: "sample",
+                             mode:"mode_file",
+                             active_reporter:"on"]
+            }
+        }
+```
+
+引用包含注解的库：
+
+```
+dependencies {
+    implementation project(":vh_reporter")
+}
+```
+
+为了避免每次编译都进行处理，我们可以将该部分内容独立，避免资源消耗，以及windows反复出现的文件占用问题：
+
+```
+
+//use command line:'gradle clean :sample:printReporter :sample:compileDebugSource'
+task printReporter {
+    doFirst {
+        project.dependencies.add("annotationProcessor", 'osp.leobert.android:report-anno-compiler:1.1.1')
+        project.dependencies.add("annotationProcessor", 'org.apache.commons:commons-lang3:3.4')
+        project.dependencies.add("annotationProcessor", 'org.apache.commons:commons-collections4:4.1')
+
+        println("add vh reporter ++++++++++")
+        project.dependencies.add("annotationProcessor", project(':vh_reporter'))
+    }
+}
+```
+
+使用命令行,执行任务，compileDebugSources根据具体情况走，配置过flavor的会存在命令变种：
+
+```
+use command line:'gradle clean :sample:printReporter :sample:compileDebugSources'
+```
+
+生成文件路径：
+
+{projectroot}/Reports/SampleViewHoldersReport.md
+
+---
