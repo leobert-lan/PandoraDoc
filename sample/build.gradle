@@ -1,0 +1,57 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 28
+
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [module: "sample",
+                             mode:"mode_file",
+                             active_reporter:"on"]
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    implementation 'osp.leobert.android:pandora:0.0.4'
+    implementation 'osp.leobert.android:pandorarv:0.0.4'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+
+    implementation project(":vh_reporter")
+}
+
+//use command line:'gradle clean :sample:printReporter :sample:compileDebugSource'
+task printReporter {
+    doFirst {
+        project.dependencies.add("annotationProcessor", 'osp.leobert.android:report-anno-compiler:1.1.1')
+        project.dependencies.add("annotationProcessor", 'org.apache.commons:commons-lang3:3.4')
+        project.dependencies.add("annotationProcessor", 'org.apache.commons:commons-collections4:4.1')
+
+        println("add vh reporter ++++++++++")
+        project.dependencies.add("annotationProcessor", project(':vh_reporter'))
+    }
+}
